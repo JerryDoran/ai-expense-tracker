@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className='bg-gray-900 py-12'>
+    <footer className='bg-gray-900 py-4'>
       <div className='container mx-auto text-center flex flex-col items-center space-y-2'>
         <p className='text-center text-muted-foreground text-xs'>
           Copyright &copy; {new Date().getFullYear()}
