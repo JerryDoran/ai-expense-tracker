@@ -1,10 +1,34 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 export default function Hero() {
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const imageElement = imageRef.current;
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const scrollThreshold = 100; // Adjust this value to control when the effect starts
+
+      if (scrollPosition > scrollThreshold) {
+        imageElement.classList.add('scrolled');
+      } else {
+        imageElement.classList.remove('scrolled');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className='pb-20 px-4 mt-40'>
       <div className='container mx-auto text-center'>
@@ -28,7 +52,7 @@ export default function Hero() {
           </Link>
         </div>
         <div className='hero-image-wrapper'>
-          <div className=''>
+          <div ref={imageRef} className='hero-image'>
             <Image
               src='/banner.jpeg'
               alt='Dashboard Preview'
