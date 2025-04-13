@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { devIndicators: false };
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'randomuser.me',
+      },
+    ],
+  },
+};
 
 export default nextConfig;

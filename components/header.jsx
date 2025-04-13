@@ -17,15 +17,13 @@ export default function Header() {
       <nav className='container mx-auto px-4 py-1 flex items-center justify-between'>
         <Link href='/' className='text-2xl font-bold flex items-center'>
           <Image
-            src='/beelogo.png'
+            src='/logo.svg'
             alt='Beekeeper Logo'
-            width={50}
-            height={50}
-            className='h-12 w-auto object-contain mr-1 mb-2'
+            width={30}
+            height={30}
+            className='size-8 object-contain mr-2 mb-2'
           />
-          <span className='bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent'>
-            Beekeeper
-          </span>
+          <span className='gradient-title'>Beekeeper</span>
         </Link>
         <div className='flex items-center space-x-4'>
           <SignedIn>
