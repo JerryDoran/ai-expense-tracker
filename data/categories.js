@@ -85,7 +85,7 @@ export const defaultCategories = [
   },
   {
     id: "food",
-    name: "Food",
+    name: "Eating Out",
     type: "EXPENSE",
     color: "#f43f5e", // rose-500
     icon: "UtensilsCrossed",
