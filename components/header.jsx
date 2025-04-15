@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { checkUser } from '@/lib/check-user';
 import {
   SignedIn,
   UserButton,
@@ -5,13 +8,13 @@ import {
   SignInButton,
   SignUpButton,
 } from '@clerk/nextjs';
-import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard } from 'lucide-react';
 import { PenBox } from 'lucide-react';
 
-export default function Header() {
+export default async function Header() {
+  await checkUser();
+
   return (
     <div className='fixed top-0 w-full backdrop-blur-md  border-b border-gray-700 z-50 flex items-center justify-between px-4 py-2'>
       <nav className='container mx-auto px-4 py-1 flex items-center justify-between'>
