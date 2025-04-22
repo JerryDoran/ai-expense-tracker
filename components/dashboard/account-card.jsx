@@ -1,4 +1,10 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { updateDefaultAccount } from '@/actions/account';
+import useFetch from '@/hooks/use-fetch';
+
 import {
   Card,
   CardContent,
@@ -9,8 +15,40 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { ArrowDownRight } from 'lucide-react';
 import { ArrowUpRight } from 'lucide-react';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export default function AccountCard({ account }) {
+  const {
+    loading: updateDefaultLoading,
+    fn: updateDefaultFn,
+    error,
+    data: updatedAccount,
+  } = useFetch(updateDefaultAccount);
+
+  async function handleDefaultChange(e) {
+    e.preventDefault();
+
+    if (account.isDefault) {
+      toast.warning('You need at least one default account');
+      return;
+    }
+
+    await updateDefaultFn(account.id);
+  }
+
+  useEffect(() => {
+    if (updatedAccount?.success) {
+      toast.success('Default account updated successfully!');
+    }
+  }, [updatedAccount]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || 'Default account was not updated!');
+    }
+  }, [error]);
+
   return (
     <Card
       key={account.id}
@@ -20,7 +58,19 @@ export default function AccountCard({ account }) {
         <CardTitle className='text-sm font-medium capitalize'>
           {account.name}
         </CardTitle>
-        <Switch className='cursor-pointer' />
+        {updateDefaultLoading && (
+          <div className='absolute top-15 left-60 flex items-center gap-2'>
+            <span className='text-sm'>Updating...</span>
+            <Loader2 className='animate-spin' />
+          </div>
+        )}
+
+        <Switch
+          className='cursor-pointer'
+          checked={account.isDefault}
+          onClick={handleDefaultChange}
+          disabled={updateDefaultLoading}
+        />
       </CardHeader>
       <Link href={`/account/${account.id}`}>
         <CardContent className=''>

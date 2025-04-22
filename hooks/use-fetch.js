@@ -1,4 +1,3 @@
-import { set } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -21,6 +20,7 @@ const useFetch = (cb) => {
     }
   };
 
+  console.log('[DATA USEFETCH]', data);
   return { data, loading, error, fn, setData };
 };
 
