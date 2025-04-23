@@ -58,19 +58,15 @@ export default function AccountCard({ account }) {
         <CardTitle className='text-sm font-medium capitalize'>
           {account.name}
         </CardTitle>
-        {updateDefaultLoading && (
-          <div className='absolute top-15 left-60 flex items-center gap-2'>
-            <span className='text-sm'>Updating...</span>
-            <Loader2 className='animate-spin' />
-          </div>
-        )}
-
-        <Switch
-          className='cursor-pointer'
-          checked={account.isDefault}
-          onClick={handleDefaultChange}
-          disabled={updateDefaultLoading}
-        />
+        <div className='flex space-x-4 items-center'>
+          {updateDefaultLoading && <Loader2 className='animate-spin size-5' />}
+          <Switch
+            className='cursor-pointer'
+            checked={account.isDefault}
+            onClick={handleDefaultChange}
+            disabled={updateDefaultLoading}
+          />
+        </div>
       </CardHeader>
       <Link href={`/account/${account.id}`}>
         <CardContent className=''>
