@@ -11,6 +11,23 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { format } from 'date-fns';
 import { categoryColors } from '@/data/categories';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { Clock, RefreshCw } from 'lucide-react';
+
+const RECURRING_INTERVALS = {
+  DAILY: 'Daily',
+  WEEKLY: 'Weekly',
+  BIWEEKLY: 'Biweekly',
+  MONTHLY: 'Monthly',
+  QUARTERLY: 'Quarterly',
+  YEARLY: 'Yearly',
+};
 
 export default function TransactionsTable({ transactions }) {
   const filteredAndSortedTransactions = transactions;
@@ -90,7 +107,41 @@ export default function TransactionsTable({ transactions }) {
                     {transaction.amount}
                   </TableCell>
                   <TableCell>
-                    {transaction.isRecurring ? () : ()}
+                    {transaction.isRecurring ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Badge
+                              variant='outline'
+                              className='gap-1 bg-purple-700 text-purple-100 hover:bg-purple-800 transition'
+                            >
+                              <RefreshCw className='h-4 w-4' />
+                              {
+                                RECURRING_INTERVALS[
+                                  transaction.recurringInterval
+                                ]
+                              }
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <div>
+                              <div className='text-xs'>Next Date:</div>
+                              <div className='text-xs font-medium'>
+                                {format(
+                                  new Date(transaction.nextRecurringDate),
+                                  'PP'
+                                )}
+                              </div>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <Badge variant='outline' className='gap-1'>
+                        <Clock className='h-4 w-4' />
+                        One-time
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell></TableCell>
                 </TableRow>
