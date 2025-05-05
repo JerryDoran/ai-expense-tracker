@@ -1,5 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { format } from 'date-fns';
+
 import {
   Table,
   TableBody,
@@ -9,7 +13,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { format } from 'date-fns';
 import { categoryColors } from '@/data/categories';
 import {
   Tooltip,
@@ -19,6 +22,14 @@ import {
 } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Clock, RefreshCw } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { MoreHorizontal } from 'lucide-react';
 
 const RECURRING_INTERVALS = {
   DAILY: 'Daily',
@@ -30,6 +41,12 @@ const RECURRING_INTERVALS = {
 };
 
 export default function TransactionsTable({ transactions }) {
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [sortConfig, setSortConfig] = useState({
+    field: 'date',
+    direction: 'desc',
+  });
+  const router = useRouter();
   const filteredAndSortedTransactions = transactions;
   function handleSort(sort) {}
   return (
@@ -98,7 +115,7 @@ export default function TransactionsTable({ transactions }) {
                     </span>
                   </TableCell>
                   <TableCell
-                    className='flex justify-end font-medium'
+                    className='flex justify-end mt-2 font-medium'
                     style={{
                       color: transaction.type === 'EXPENSE' ? 'red' : 'green',
                     }}
@@ -143,7 +160,36 @@ export default function TransactionsTable({ transactions }) {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell></TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='cursor-pointer p-0 '
+                        >
+                          <MoreHorizontal className='size-4' />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(
+                              `/transaction/create?edit=${transaction.id}`
+                            )
+                          }
+                        >
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className='text-destructive'
+                          // onClick={() => deleteTransaction([transaction.id])}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))
             )}
