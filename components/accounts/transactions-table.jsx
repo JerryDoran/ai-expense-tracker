@@ -30,6 +30,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 const RECURRING_INTERVALS = {
   DAILY: 'Daily',
@@ -41,17 +45,58 @@ const RECURRING_INTERVALS = {
 };
 
 export default function TransactionsTable({ transactions }) {
+  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     field: 'date',
     direction: 'desc',
   });
-  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('');
+  const [recurringFilter, setRecurringFilter] = useState('');
+
   const filteredAndSortedTransactions = transactions;
-  function handleSort(sort) {}
+
+  function handleSort(field) {
+    setSortConfig((prev) => ({
+      field,
+      direction:
+        prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  }
+
+  function handleSelect(id) {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((selectedId) => selectedId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  }
+
+  function handleSelectAll() {
+    setSelectedIds((prev) =>
+      prev.length === filteredAndSortedTransactions.length
+        ? []
+        : filteredAndSortedTransactions.map((transaction) => transaction.id)
+    );
+  }
+
   return (
     <div className='space-y-4'>
       {/* Filters */}
+      <div className='flex flex-col sm:flex-row gap-4 '>
+        <div className='relative flex-1'>
+          <Search className='absolute left-2 top-2.5 size-4 text-muted-foreground' />
+          <Input
+            className='pl-8'
+            placeholder='Search Transactions...'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
 
       {/* Transactions */}
       <div className='rounded-md border'>
@@ -59,26 +104,57 @@ export default function TransactionsTable({ transactions }) {
           <TableHeader>
             <TableRow>
               <TableHead className='w-[50px]'>
-                <Checkbox />
+                <Checkbox
+                  onCheckedChange={handleSelectAll}
+                  checked={
+                    selectedIds.length ===
+                      filteredAndSortedTransactions.length &&
+                    filteredAndSortedTransactions.length > 0
+                  }
+                />
               </TableHead>
               <TableHead
                 className='cursor-pointer'
                 onClick={() => handleSort('date')}
               >
-                <div className='flex items-center'>Date</div>
+                <div className='flex items-center'>
+                  Date{' '}
+                  {sortConfig.field === 'date' &&
+                    (sortConfig.direction === 'asc' ? (
+                      <ChevronUp className='ml-2 size-4' />
+                    ) : (
+                      <ChevronDown className='ml-2 size-4' />
+                    ))}
+                </div>
               </TableHead>
               <TableHead>Description</TableHead>
               <TableHead
                 className='cursor-pointer'
                 onClick={() => handleSort('category')}
               >
-                <div className='flex items-center'>Category</div>
+                <div className='flex items-center'>
+                  Category{' '}
+                  {sortConfig.field === 'category' &&
+                    (sortConfig.direction === 'asc' ? (
+                      <ChevronUp className='ml-2 size-4' />
+                    ) : (
+                      <ChevronDown className='ml-2 size-4' />
+                    ))}
+                </div>
               </TableHead>
               <TableHead
                 className='cursor-pointer'
                 onClick={() => handleSort('amount')}
               >
-                <div className='flex items-center justify-end'>Amount</div>
+                <div className='flex items-center justify-end'>
+                  Amount{' '}
+                  {sortConfig.field === 'amount' &&
+                    (sortConfig.direction === 'asc' ? (
+                      <ChevronUp className='ml-2 size-4' />
+                    ) : (
+                      <ChevronDown className='ml-2 size-4' />
+                    ))}
+                </div>
               </TableHead>
               <TableHead>Recurring</TableHead>
               <TableHead className='w-[50px]'></TableHead>
@@ -98,7 +174,10 @@ export default function TransactionsTable({ transactions }) {
               filteredAndSortedTransactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox
+                      onCheckedChange={() => handleSelect(transaction.id)}
+                      checked={selectedIds.includes(transaction.id)}
+                    />
                   </TableCell>
                   <TableCell>
                     {format(new Date(transaction.date), 'PP')}

@@ -6,7 +6,6 @@ import { BarLoader } from 'react-spinners';
 
 export default async function AccountPage({ params }) {
   const accountData = await getAccountWithTransactions(params.id);
-  console.log(accountData);
 
   if (!accountData) {
     notFound();
