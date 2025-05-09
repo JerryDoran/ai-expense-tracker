@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 
 import {
   Table,
@@ -34,6 +34,15 @@ import { ChevronUp } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Trash } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const RECURRING_INTERVALS = {
   DAILY: 'Daily',
@@ -66,13 +75,11 @@ export default function TransactionsTable({ transactions }) {
   }
 
   function handleSelect(id) {
-    setSelectedIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((selectedId) => selectedId !== id);
-      } else {
-        return [...prev, id];
-      }
-    });
+    setSelectedIds((prev) =>
+      prev.includes(id)
+        ? prev.filter((selectedId) => selectedId !== id)
+        : [...prev, id]
+    );
   }
 
   function handleSelectAll() {
@@ -81,6 +88,12 @@ export default function TransactionsTable({ transactions }) {
         ? []
         : filteredAndSortedTransactions.map((transaction) => transaction.id)
     );
+  }
+
+  function handleBulkDelete() {
+    // Implement bulk delete logic here
+
+    setSelectedIds([]);
   }
 
   return (
@@ -95,6 +108,58 @@ export default function TransactionsTable({ transactions }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+        <div className='flex gap-2'>
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger>
+              <SelectValue placeholder='All Types' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='INCOME'>Income</SelectItem>
+              <SelectItem value='EXPENSE'>Expense</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={recurringFilter}
+            onValueChange={(value) => setRecurringFilter(value)}
+          >
+            <SelectTrigger className='w-[160px]'>
+              <SelectValue placeholder='All Transactions' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='recurring'>Recurring Only</SelectItem>
+              <SelectItem value='non-recurring'>Non-recurring</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {selectedIds.length > 0 && (
+            <Button
+              className='cursor-pointer'
+              variant='destructive'
+              size='sm'
+              onClick={handleBulkDelete}
+            >
+              <Trash className='size-4' />
+              Delete Selected ({selectedIds.length})
+            </Button>
+          )}
+
+          {(searchTerm || filterType || recurringFilter) && (
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => {
+                setSearchTerm('');
+                setFilterType('');
+                setRecurringFilter('');
+                setSelectedIds([]);
+              }}
+              className='cursor-pointer'
+            >
+              <X className='size-4' />
+              Clear Filters
+            </Button>
+          )}
         </div>
       </div>
 

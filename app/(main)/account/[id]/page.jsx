@@ -5,7 +5,8 @@ import { Suspense } from 'react';
 import { BarLoader } from 'react-spinners';
 
 export default async function AccountPage({ params }) {
-  const accountData = await getAccountWithTransactions(params.id);
+  const { id } = await params;
+  const accountData = await getAccountWithTransactions(id);
 
   if (!accountData) {
     notFound();
